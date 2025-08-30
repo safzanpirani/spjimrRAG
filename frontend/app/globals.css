@@ -1,0 +1,173 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Updated CSS variables to match SPJIMR design language colors */
+:root {
+  --background: #ffffff;
+  --foreground: #6d6e71;
+  --card: #ffffff;
+  --card-foreground: #6d6e71;
+  --popover: #ffffff;
+  --popover-foreground: #6d6e71;
+  --primary: #5a2d81;
+  --primary-foreground: #ffffff;
+  --secondary: #f39221;
+  --secondary-foreground: #ffffff;
+  --muted: #f8f9fa;
+  --muted-foreground: #6d6e71;
+  --accent: #f39221;
+  --accent-foreground: #ffffff;
+  --destructive: #dc3545;
+  --destructive-foreground: #ffffff;
+  --border: #e9ecef;
+  --input: #e9ecef;
+  --ring: #5a2d81;
+  --chart-1: #5a2d81;
+  --chart-2: #f39221;
+  --chart-3: #6d6e71;
+  --chart-4: #e9ecef;
+  --chart-5: #f8f9fa;
+  --radius: 0.5rem;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #6d6e71;
+  --sidebar-primary: #5a2d81;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f8f9fa;
+  --sidebar-accent-foreground: #6d6e71;
+  --sidebar-border: #e9ecef;
+  --sidebar-ring: #5a2d81;
+}
+
+.dark {
+  --background: #1a1a1a;
+  --foreground: #e9ecef;
+  --card: #2d2d2d;
+  --card-foreground: #e9ecef;
+  --popover: #2d2d2d;
+  --popover-foreground: #e9ecef;
+  --primary: #7b4397;
+  --primary-foreground: #ffffff;
+  --secondary: #f39221;
+  --secondary-foreground: #ffffff;
+  --muted: #3a3a3a;
+  --muted-foreground: #a0a0a0;
+  --accent: #f39221;
+  --accent-foreground: #ffffff;
+  --destructive: #dc3545;
+  --destructive-foreground: #ffffff;
+  --border: #3a3a3a;
+  --input: #3a3a3a;
+  --ring: #7b4397;
+  --chart-1: #7b4397;
+  --chart-2: #f39221;
+  --chart-3: #a0a0a0;
+  --chart-4: #3a3a3a;
+  --chart-5: #2d2d2d;
+  --sidebar: #2d2d2d;
+  --sidebar-foreground: #e9ecef;
+  --sidebar-primary: #7b4397;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #3a3a3a;
+  --sidebar-accent-foreground: #e9ecef;
+  --sidebar-border: #3a3a3a;
+  --sidebar-ring: #7b4397;
+}
+
+@theme inline {
+  --font-sans: var(--font-inter), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Added SPJIMR-specific typography styles */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply text-primary font-semibold;
+    line-height: 1.2;
+  }
+
+  h1 {
+    @apply text-4xl mb-6;
+  }
+
+  h2 {
+    @apply text-3xl mb-5;
+  }
+
+  h3 {
+    @apply text-2xl mb-4;
+  }
+
+  p {
+    @apply text-foreground leading-relaxed mb-6;
+  }
+
+  /* Markdown rendering fixes */
+  .markdown-content li > p {
+    margin: 0;
+    display: inline;
+  }
+  .markdown-content ol,
+  .markdown-content ul {
+    padding-left: 1.25rem; /* ensure space for outside markers */
+  }
+
+  /* Bring back purple headings inside markdown */
+  .markdown-content h1,
+  .markdown-content h2,
+  .markdown-content h3,
+  .markdown-content h4,
+  .markdown-content h5,
+  .markdown-content h6 {
+    color: var(--primary);
+  }
+}

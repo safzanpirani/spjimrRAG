@@ -1,0 +1,73 @@
+{
+  "name": "spjimr-pgpm-rag-backend",
+  "version": "1.0.0",
+  "description": "RAG Backend for SPJIMR PGPM Chat Interface",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "dev:with-ingestion": "RUN_INGESTION_ON_STARTUP=true tsx src/index.ts",
+    "build": "tsc",
+    "build:clean": "rm -rf dist && tsc",
+    "start": "node dist/index.js",
+    "start:prod": "NODE_ENV=production node dist/index.js",
+    "type-check": "tsc --noEmit",
+    "ingest": "tsx src/scripts/ingestDocuments.ts",
+    "ingest:force": "tsx src/scripts/ingestDocuments.ts --force-reindex",
+    "ingest:validate": "tsx src/scripts/ingestDocuments.ts --validate",
+    "ingest:dry-run": "tsx src/scripts/ingestDocuments.ts --dry-run",
+    "setup": "tsx src/scripts/setupEnv.ts",
+    "setup:validate": "tsx src/scripts/setupEnv.ts --validate-only",
+    "setup:db": "tsx src/scripts/setupEnv.ts --setup-db",
+    "test:workflow": "tsx -e \"import('./src/langgraph/workflow').then(m => m.testWorkflow().then(console.log))\"",
+    "db:setup": "echo 'Database setup via Supabase dashboard'",
+    "health-check": "curl -f http://localhost:8000/api/health || exit 1",
+    "clean": "rm -rf dist node_modules/.cache",
+    "postinstall": "npm run build"
+  },
+  "dependencies": {
+    "@langchain/community": "^0.3.0",
+    "@langchain/core": "^0.3.0",
+    "@langchain/langgraph": "^0.1.0",
+    "@langchain/openai": "^0.3.0",
+    "@langchain/textsplitters": "^0.1.0",
+    "@supabase/supabase-js": "^2.45.0",
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.1.0",
+    "helmet": "^7.1.0",
+    "langchain": "^0.3.0",
+    "langfuse": "^3.38.5",
+    "langfuse-langchain": "^3.38.5",
+    "openai": "^4.104.0",
+    "pdf-parse": "^1.1.1",
+    "uuid": "^9.0.1",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/compression": "^1.7.5",
+    "@types/cors": "^2.8.13",
+    "@types/express": "^4.17.17",
+    "@types/node": "^20.0.0",
+    "@types/pdf-parse": "^1.1.1",
+    "@types/uuid": "^9.0.7",
+    "nodemon": "^3.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "rag",
+    "langchain",
+    "langgraph",
+    "openai",
+    "supabase",
+    "spjimr",
+    "pgpm"
+  ],
+  "author": "SPJIMR RAG Team",
+  "license": "MIT"
+}
