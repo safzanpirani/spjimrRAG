@@ -1,8 +1,8 @@
 [phases.install]
-cmd = "npm install --production=false"
+cmds = ["npm install --no-audit --no-fund"]
 
 [phases.build]
-cmd = "npm run build"
+cmds = ["npm run build"]
 
 [start]
 cmd = "npm start"
