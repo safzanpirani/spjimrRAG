@@ -68,7 +68,8 @@ class SPJIMRChatServer {
     }));
 
     // Compression and parsing (disable for SSE streaming route)
-    const compressionFilter = (req: Request, res: Response) => {
+    // Use loose types here to avoid differing Express type packages in some build environments
+    const compressionFilter = (req: any, res: any) => {
       try {
         // Do not compress Server-Sent Events
         if (req.path === '/api/chat/stream') {
