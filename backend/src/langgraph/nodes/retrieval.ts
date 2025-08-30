@@ -26,6 +26,27 @@ const DEFAULT_RETRIEVAL_CONFIG = {
   maxTokens: 4000, // Maximum total tokens from retrieved docs
 };
 
+const extractLatestUserQuery = (composite: string): string => {
+  if (!composite) return composite;
+
+  const marker1 = "Current user request:";
+  const idx1 = composite.lastIndexOf(marker1);
+  if (idx1 !== -1) {
+    const after = composite.substring(idx1 + marker1.length);
+    const line = after.split("\n")[0] || after;
+    return line.trim();
+  }
+
+  const marker2 = "User:";
+  const idx2 = composite.lastIndexOf(marker2);
+  if (idx2 !== -1) {
+    const after = composite.substring(idx2 + marker2.length);
+    return after.trim();
+  }
+
+  return composite;
+};
+
 export const retrievalNode = async (state: RAGState): Promise<Partial<RAGState>> => {
   try {
     const root = getActiveLangfuseTrace();
@@ -73,7 +94,9 @@ export const retrievalNode = async (state: RAGState): Promise<Partial<RAGState>>
 
     // Perform similarity search with adaptive filter
     const maxDocs = parseInt(process.env['MAX_RETRIEVAL_DOCS'] || "8");
-    const filter = createRetrievalFilter(searchQuery);
+    // Build metadata filter from the latest user question within the composite, not from expanded text
+    const latestUserQuery = extractLatestUserQuery(state.query);
+    const filter = createRetrievalFilter(latestUserQuery);
     const retriever = vectorStore.asRetriever({
       k: maxDocs,
       searchType: "similarity",
