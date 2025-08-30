@@ -21,8 +21,7 @@
     "test:workflow": "tsx -e \"import('./src/langgraph/workflow').then(m => m.testWorkflow().then(console.log))\"",
     "db:setup": "echo 'Database setup via Supabase dashboard'",
     "health-check": "curl -f http://localhost:8000/api/health || exit 1",
-    "clean": "rm -rf dist node_modules/.cache",
-    "postinstall": "npm run build"
+    "clean": "rm -rf dist node_modules/.cache"
   },
   "dependencies": {
     "@langchain/community": "^0.3.0",
