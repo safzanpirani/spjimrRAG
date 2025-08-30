@@ -94,18 +94,20 @@ export function ChatInterface() {
   const [isStreaming, setIsStreaming] = useState(false)
   const [streamingContent, setStreamingContent] = useState("")
   const [sessionId, setSessionId] = useState<string | null>(null)
+  const [isMobile, setIsMobile] = useState(false)
 
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
   const [autoScroll, setAutoScroll] = useState(true)
-  const BOTTOM_OFFSET_PX = 96
+  const [bottomOffset, setBottomOffset] = useState(96)
 
   // Auto-scroll to the bottom sentinel inside the scroll area
   useEffect(() => {
     if (!autoScroll) return
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
-  }, [messages, streamingContent, autoScroll])
+    const behavior: ScrollBehavior = isStreaming ? 'auto' : 'smooth'
+    bottomRef.current?.scrollIntoView({ behavior, block: 'end' })
+  }, [messages, streamingContent, autoScroll, isStreaming])
 
   const handleScrollContainer = () => {
     const el = scrollAreaRef.current
@@ -115,23 +117,49 @@ export function ChatInterface() {
   }
 
   useEffect(() => {
-    inputRef.current?.focus()
+    try {
+      const m = typeof window !== 'undefined' && (window.innerWidth < 640 || /Mobi|Android/i.test(navigator.userAgent))
+      setIsMobile(!!m)
+    } catch {}
   }, [])
 
   // Ensure input is focusable immediately after streaming and loading finish
   useEffect(() => {
-    if (!isLoading && !isStreaming) {
+    if (!isLoading && !isStreaming && !isMobile) {
       inputRef.current?.focus()
     }
-  }, [isLoading, isStreaming])
+  }, [isLoading, isStreaming, isMobile])
 
   const handleSampleQuestion = (question: string) => {
     setInput(question)
-    inputRef.current?.focus()
+    // Do not auto-focus on mobile to avoid opening the keyboard
   }
 
   const focusInput = () => {
-    inputRef.current?.focus()
+    if (!isMobile) inputRef.current?.focus()
+  }
+
+  const scrollToBottom = () => {
+    try {
+      bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
+      if (isMobile) {
+        // Ensure the sticky input is visible above the mobile keyboard
+        window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' })
+      }
+    } catch {}
+  }
+
+  const raiseInput = () => {
+    if (!isMobile) return
+    setBottomOffset(360)
+    const doScroll = () => {
+      try {
+        bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
+        window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' })
+      } catch {}
+    }
+    setTimeout(doScroll, 60)
+    setTimeout(doScroll, 350)
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -236,6 +264,7 @@ export function ChatInterface() {
                   }
                   setMessages((prev) => [...prev, assistantMessage])
                   focusInput()
+                  scrollToBottom()
                   break
                 case 'error':
                   console.error("Streaming error:", eventData.error)
@@ -244,6 +273,7 @@ export function ChatInterface() {
                 case 'end':
                   setIsStreaming(false)
                   focusInput()
+                  scrollToBottom()
                   break
                 default:
                   // ignore other event types (e.g., pings)
@@ -296,6 +326,7 @@ export function ChatInterface() {
               : undefined,
           }
           setMessages((prev) => [...prev, assistantMessage])
+          scrollToBottom()
         } else {
           throw new Error("Fallback request failed")
         }
@@ -444,7 +475,7 @@ export function ChatInterface() {
                 </div>
               </div>
             )}
-            <div ref={bottomRef} style={{ height: BOTTOM_OFFSET_PX }} />
+            <div ref={bottomRef} style={{ height: bottomOffset }} />
           </div>
         </ScrollArea>
       )}
@@ -459,6 +490,11 @@ export function ChatInterface() {
             placeholder="Ask about PGPM admissions, curriculum, placements..."
             disabled={isLoading || isStreaming}
             className="flex-1"
+            onFocus={raiseInput}
+            onPointerDown={raiseInput}
+            onTouchStart={raiseInput}
+            onClick={raiseInput}
+            onBlur={() => setBottomOffset(96)}
           />
           <Button type="submit" disabled={!input.trim() || isLoading || isStreaming} className="px-4">
             <Send className="h-4 w-4" />
